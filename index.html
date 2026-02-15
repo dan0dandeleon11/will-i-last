@@ -6,8 +6,9 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#1a1a2e">
+<meta name="description" content="Are you burning through your Claude usage too fast? Punch in your % from Settings and find out instantly.">
 <link rel="manifest" href="data:application/json,{}">
-<title>Claude Usage Tracker</title>
+<title>Will I Last? â€” Claude Usage Pace Checker</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -42,7 +43,7 @@
   }
 
   header h1 {
-    font-size: 1.2rem;
+    font-size: 1.5rem;
     color: var(--claude-tan);
   }
 
@@ -296,20 +297,70 @@
   .color-warn { color: var(--warn); }
   .color-bad { color: var(--bad); }
 
+  /* ---- How It Works ---- */
+  details.how-it-works {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 0.8rem 1rem;
+    margin-bottom: 1rem;
+  }
+
+  details.how-it-works summary {
+    cursor: pointer;
+    font-size: 0.8rem;
+    color: var(--muted);
+    list-style: none;
+  }
+  details.how-it-works summary::-webkit-details-marker { display: none; }
+
+  .how-steps {
+    margin-top: 0.6rem;
+    font-size: 0.78rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .how-steps ol {
+    padding-left: 1.2rem;
+  }
+
+  .how-steps li {
+    margin-bottom: 0.3rem;
+  }
+
+  .how-steps strong {
+    color: var(--text);
+  }
+
+  .how-steps .explainer {
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    background: var(--bg);
+    border-radius: 6px;
+    font-size: 0.72rem;
+    line-height: 1.5;
+  }
+
   .footer {
     text-align: center;
     color: #444;
     font-size: 0.6rem;
     padding: 0.5rem 0 1rem;
   }
+
+  .footer a {
+    color: #555;
+    text-decoration: none;
+  }
+  .footer a:hover { color: var(--muted); }
 </style>
 </head>
 <body>
 
 <div class="container">
   <header>
-    <h1>Claude Usage Tracker</h1>
-    <div class="sub">Just type in the % you see in Settings &rarr; Usage</div>
+    <h1>Will I Last?</h1>
+    <div class="sub">Claude weekly usage pace checker</div>
   </header>
 
   <!-- Time Ring -->
@@ -386,9 +437,24 @@
 
   <!-- Smart Suggestion -->
   <div class="suggestion" id="suggestion">
-    <h2>Budget Advice</h2>
+    <h2>Daily Budget</h2>
     <div id="suggestionText"></div>
   </div>
+
+  <!-- How It Works -->
+  <details class="how-it-works">
+    <summary>How does this work?</summary>
+    <div class="how-steps">
+      <ol>
+        <li>Go to <strong>claude.ai &rarr; Settings &rarr; Usage</strong></li>
+        <li>Find the <strong>"% used"</strong> next to each weekly limit</li>
+        <li>Type those numbers in above</li>
+      </ol>
+      <div class="explainer">
+        This tool compares your <strong>usage %</strong> against the <strong>time elapsed %</strong> in your billing week. If you've used 50% but only 30% of the week has passed, you're burning too fast. If you've used 30% and 50% of the week is gone, you've got plenty of room. It also calculates exactly how much % per day you can safely use for the rest of the week.
+      </div>
+    </div>
+  </details>
 
   <!-- Settings -->
   <details class="settings">
@@ -413,7 +479,9 @@
     </div>
   </details>
 
-  <div class="footer">Values saved locally between visits</div>
+  <div class="footer">
+    No data leaves your browser &middot; <a href="https://github.com/dan0dandeleon11/claude-usage-tracker">GitHub</a>
+  </div>
 </div>
 
 <script>
@@ -424,7 +492,7 @@ const WEEK_MS = 168 * 3600000;
 // ---- Persistence ----
 function load() {
   try {
-    const s = JSON.parse(localStorage.getItem('claudeUsageTracker'));
+    const s = JSON.parse(localStorage.getItem('willILast'));
     if (!s) return;
     if (s.day != null) $('resetDay').value = s.day;
     if (s.time) $('resetTime').value = s.time;
@@ -434,7 +502,7 @@ function load() {
 }
 
 function save() {
-  localStorage.setItem('claudeUsageTracker', JSON.stringify({
+  localStorage.setItem('willILast', JSON.stringify({
     day: $('resetDay').value,
     time: $('resetTime').value,
     allModels: $('allModelsInput').value,
